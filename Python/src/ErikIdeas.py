@@ -4,6 +4,7 @@
     # 1 = player0_right
     # 2 = player1_left
     # 3 = player1_right
+__author__ = "group"
 
 def tap(state,action):
     newState = list(state)
@@ -13,10 +14,20 @@ def tap(state,action):
     newState[action[1]] += newState[action[0]]
     if newState[action[1]] >= 5 :
         newState[action[1]] = newState[action[1]] % 5
+        if newState[-1] == 0:
+            newState[-1] = 1
+        else:
+            newState[-1] = 0
     return tuple(newState)
 
+def goal_test(state):
+    state = list(state[0:-2])
+    if(sum(state)==0):
+        return True
+    return False
+
 def main():
-    state = (1,1,1,1)
+    state = (1,1,1,1,0)
     action = (0,2)
     state = tap(state,action)
     print(state)
