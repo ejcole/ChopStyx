@@ -7,7 +7,7 @@
 __author__ = "group"
 
 def tap(state,action):
-    newState = list(state)
+    newState = state
     if newState[action[1]] == 0:
         print("Invalid Move")
         return state
@@ -18,6 +18,8 @@ def tap(state,action):
         newState[4] = 1
     else:
         newState[4] = 0
+
+
     return tuple(newState)
 
 def main():
