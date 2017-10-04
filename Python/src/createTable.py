@@ -99,6 +99,7 @@ def main():
     # initial_state.parent = None
     # initial_state.loop = None
     # initial_state.key = key_maker(initial_state.hands, initial_state.key)
+
     state_set = set()
     state_dict = {}
     # createStates_set(initial_state,state_set)
