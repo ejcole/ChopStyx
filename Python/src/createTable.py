@@ -8,12 +8,13 @@ class State:
     # loop = ()
     # key = ()
 
-    def __init__(self, hand=(1, 1, 1, 1), turn=0, parent=None, loop=(), key=(1, 1, 1, 1, 0)):
+    def __init__(self, hand=(1, 1, 1, 1), turn=0, parent=None, loop=(), key=(1, 1, 1, 1, 0), childs=()):
         self.hands = hand
         self.turn = turn #p1 or p2
         self.parent = parent
         self.loop = loop
         self.key = key
+        self.childs = childs
     #
     # def key_maker(self):
     #     return tuple(list(hands).append(turn))
@@ -25,7 +26,7 @@ def tap(state, action):
         print("Invalid Move")
         return state
     newHands[action[1]] += newHands[action[0]]
-    if newHands[action[1]] >= 5 :
+    if newHands[action[1]] >= 5:
         newHands[action[1]] = newHands[action[1]] % 5
 
     newState = State(hand=tuple(newHands), turn=(state.turn + 1) % 2, parent=state)
@@ -38,20 +39,20 @@ def generate_moves(state):
     p1 = [0, 1]
     p2 = [2, 3]
     moves = []
-    if not state.turn: #state[4] =0 for player 0 turn
+    if not state.turn:  # state[4] =0 for player 0 turn
         for i in p1:
             for j in p2:
                 if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i,j))
+                    moves.append((i, j))
     else:
         for i in p2:
             for j in p1:
                 if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i,j))
+                    moves.append((i, j))
     return moves
 
 
-def createStates_set(state,state_set):
+def createStates_set(state, state_set):
     if state not in state_set:
         state_set.add(state)
         moves = generate_moves(state)
@@ -68,6 +69,16 @@ def createStates_dict(state, state_dict):
             if newState in state_dict:
                 loo = list(state.loop)
                 state.loop = tuple(loo.append(newState))
+            # unique children code, doesn't work in current implementation
+            # key_list =[]
+            # child_list = list(state.childs)
+            # for child in child_list:
+            #     key_list.append(child.key)
+            # if key_maker(newState) not in key_list:
+            x = list(state.childs)
+            x.append(newState)
+            x.append(move)
+            state.childs = tuple(x)
             state_dict[state.key] = state
             createStates_dict(newState, state_dict)
 
@@ -90,9 +101,16 @@ def key_maker(state):
     # return tuple(list(state.hands).append(state.turn))
 
 
+def print_child(key, state_dict):
+    for i in state_dict[key].childs:
+        if type(i) == State:
+            print(i.key)
+        else:
+            print(i)
+
 
 def main():
-    #Player 1 hands, player 2 hands, player move,
+    # Player 1 hands, player 2 hands, player move,
     initial_state = State()
     # initial_state.hands = (1, 1, 1, 1)
     # initial_state.turn = 0
@@ -104,12 +122,12 @@ def main():
     state_dict = {}
     # createStates_set(initial_state,state_set)
     createStates_dict(initial_state, state_dict)
-    print(len(state_dict))
-    #print(state_set)
-
-
-
-
+    print(len(state_dict.keys()))
+    # print(state_set)
+    print_child((1, 1, 1, 1, 0), state_dict)
+    # for i in state_dict.keys():
+    #     print (i)
+    #
 
     # # goal_test(initial_state)
     # num_goals = 0
