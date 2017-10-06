@@ -52,13 +52,13 @@ def generate_moves(state):
     return moves
 
 
-def createStates_set(state, state_set):
+def create_States_set(state, state_set):
     if state not in state_set:
         state_set.add(state)
         moves = generate_moves(state)
         for move in moves:
             newState = tap(state, move)
-            createStates_set(newState, state_set)
+            create_States_set(newState, state_set)
 
 
 def createStates_dict(state, state_dict):
