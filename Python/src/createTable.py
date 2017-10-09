@@ -1,13 +1,7 @@
 __author__ = "group"
-
+import math
 
 class State:
-    # hands = ()
-    # turn = 0
-    # parent = None
-    # loop = ()
-    # key = ()
-
     def __init__(self, hand=(1, 1, 1, 1), turn=0, parent=None, loop=(), key=(1, 1, 1, 1, 0), childs=()):
         self.hands = hand
         self.turn = turn #p1 or p2
@@ -15,10 +9,6 @@ class State:
         self.loop = loop
         self.key = key
         self.childs = childs
-    #
-    # def key_maker(self):
-    #     return tuple(list(hands).append(turn))
-
 
 def tap(state, action):
     newHands = list(state.hands)
@@ -62,6 +52,7 @@ def create_States_set(state, state_set):
 
 
 def createStates_dict(state, state_dict):
+    #state_dict[key_maker(state)] = state
     if state.key not in state_dict:
         moves = generate_moves(state)
         for move in moves:
@@ -101,13 +92,72 @@ def key_maker(state):
     # return tuple(list(state.hands).append(state.turn))
 
 
-def print_child(key, state_dict):
-    for i in state_dict[key].childs:
+def print_child(child):
+    for i in child:
         if type(i) == State:
             print(i.key)
         else:
             print(i)
 
+
+def minimax(state):
+    depth = 0
+    action = None
+
+    child_states = state.childs
+    it = iter(child_states)
+    options = []
+    actions = []
+    for x in it:
+        child_state = x
+        action = next(it)
+        options.append(minimax_min(child_state,depth+1))
+        actions.append(action)
+    return actions[options.index(max(options))]
+
+
+def minimax_max(state, depth):
+    if(goal_test(state)):
+        return -math.exp(depth)
+
+    v= -math.inf
+    child_states = state.childs
+    it = iter(child_states)
+    for x in it:
+        child_state = x
+        action = next(it) # action is here to move the iteration around
+        v = max(v,minimax_min(child_state,depth+1))
+    return v
+
+
+def minimax_min(state, depth):
+    if(goal_test(state)):
+        return math.exp(depth)
+
+    v= math.inf
+    child_states = state.childs
+    it = iter(child_states)
+    for x in it:
+        child_state = x
+        action = next(it) # action is here to move the iteration around
+        v = min(v,minimax_max(child_state,depth+1))
+    return v
+
+def printHandAndAction(state, best_move_dict):
+    print(state.key, best_move_dict[state.key])
+    it = iter(state.childs)
+    for iters_state in it:
+        child_state = iters_state
+        action = next(it) # action is here to move the iteration around
+        if action == best_move_dict[state.key]:
+            printHandAndAction(child_state, best_move_dict)
+
+def generate_best_moves(state_dict):
+    best_move_dict = {}
+    for key in state_dict.keys():
+        current_key = state_dict[key].key
+        best_move_dict[current_key] = minimax(state_dict[current_key])
+    return best_move_dict
 
 def main():
     # Player 1 hands, player 2 hands, player move,
@@ -118,13 +168,16 @@ def main():
     # initial_state.loop = None
     # initial_state.key = key_maker(initial_state.hands, initial_state.key)
 
-    state_set = set()
-    state_dict = {}
+    #state_set = set()
+
     # createStates_set(initial_state,state_set)
+    state_dict = {}
     createStates_dict(initial_state, state_dict)
-    print(len(state_dict.keys()))
+    state_dict[initial_state.key] = initial_state
+    # print(state_dict[(1,1,1,1,0)])
+    #print(len(state_dict.keys()))
     # print(state_set)
-    print_child((1, 1, 1, 1, 0), state_dict)
+    #print_child((1, 1, 1, 1, 0), state_dict)
     # for i in state_dict.keys():
     #     print (i)
     #
@@ -136,6 +189,21 @@ def main():
     #         #print(i)
     #         num_goals += 1
     # print(num_goals)
+    #test_state = state_dict[(1,1,1,1,0)]
+    #print(test_state.parent.turn)
+   #print(test_state.parent.hands)
+    #print_child(test_state.childs)
+    best_move_dict = generate_best_moves(state_dict)
+
+    # print(best_move_dict[initial_state])
+    #print(type(best_move_dict))
+    printHandAndAction(initial_state, best_move_dict)
+
+    #print(minimax(test_state))
+
 
 if __name__ == '__main__':
     main()
+
+
+
