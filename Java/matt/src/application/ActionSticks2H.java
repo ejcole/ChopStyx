@@ -12,6 +12,8 @@ public enum ActionSticks2H implements Action
 //	OPPONENT_LEFT_ATK_LEFT,   // 2 = player1_left
 //	OPPONENT_RIGHT_ATK_RIGHT,   // 3 = player1_right 
 //	OPPONENT_RIGHT_ATK_LEFT   // 3 = player1_right
+	
+	
 	LEFT_ATK_RIGHT,
 	LEFT_ATK_LEFT, 
 	RIGHT_ATK_RIGHT,
@@ -23,4 +25,19 @@ public enum ActionSticks2H implements Action
 	{
 	}
 	
+	public String toString()
+	{
+		switch(this)
+		{
+		case LEFT_ATK_LEFT:
+			return "L->L";
+		case LEFT_ATK_RIGHT:
+			return "L->R";
+		case RIGHT_ATK_LEFT:
+			return "R->L";
+		case RIGHT_ATK_RIGHT:
+			return "R->R";
+		}
+		throw new RuntimeException("invalid state of enum for toString");
+	}
 }

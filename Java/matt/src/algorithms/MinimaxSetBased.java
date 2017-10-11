@@ -1,14 +1,19 @@
 package algorithms;
 
+import java.util.HashSet;
+
 import algorithms.abstracts.Action;
 import algorithms.abstracts.State;
 
-public class Minimax
+public class MinimaxSetBased
 {
+	public static HashSet<State> visited;
 	public static Action minimaxDecisionMax(State state)
 	{
 		// function MINIMAX-DECISION(state) returns an action
 		// return argmax a in ACTIONS(s) MIN-VALUE(RESULT(state, a))
+		visited = new HashSet<State>();
+		visited.add(state);
 		Action[] actions = state.getActions();
 		
 		Pair<Action, Double> bestMove = new Pair<>(null, Double.NEGATIVE_INFINITY);
@@ -22,6 +27,8 @@ public class Minimax
 	}
 	public static Action minimaxDecisionMin(State state)
 	{
+		visited = new HashSet<State>();
+		visited.add(state);
 		Action[] actions = state.getActions();
 		
 		Pair<Action, Double> bestMove = new Pair<>(null, Double.POSITIVE_INFINITY);
@@ -43,13 +50,18 @@ public class Minimax
 		// v <-Max(v, Min-Value(Result(s, a)))
 		// return v
 		
+		//return 0 for loop.
+		if(visited.contains(state)) 
+			return 0;
+		visited.add(state);
+		
 		if(state.isTerminal()) return state.utility(depth);
 		Action[] actions = state.getActions();
 		
 		Pair<Action, Double> bestMove = new Pair<>(null, Double.NEGATIVE_INFINITY);
 		for(Action action : actions)
 		{
-			System.out.println(state.result(state, action).toString() + " " + action.toString());
+			//System.out.println(state.result(state, action).toString() + " " + action.toString());
 			double value = minValue(state.result(state, action), depth + 1);
 			if(value > bestMove.utility)
 				bestMove.setData(action, value);
@@ -67,36 +79,25 @@ public class Minimax
 		// for each a in Actions(state) do
 		// v <-Min(v, Max-Value(Result(s, a))
 		// return v
+		
+		//return 0 for loop.
+		if(visited.contains(state))
+			return 0;
+		visited.add(state);
+		
+		
 		if(state.isTerminal()) return state.utility(depth);
 		Action[] actions = state.getActions();
 		
 		Pair<Action, Double> bestMove = new Pair<>(null, Double.POSITIVE_INFINITY);
 		for(Action action : actions)
 		{
-			System.out.println(state.result(state, action).toString() + " " + action.toString());
+			//System.out.println(state.result(state, action).toString() + " " + action.toString());
 			double value = maxValue(state.result(state, action), depth + 1);
 			if(value < bestMove.utility)
 				bestMove.setData(action, value);
 		}
 		
 		return bestMove.utility;
-	}
-}
-
-class Pair<K, V>
-{
-	public K action = null;
-	public V utility = null;
-	
-	public Pair(K newAction, V newUtility)
-	{
-		this.action = newAction;
-		this.utility = newUtility;
-	}
-	
-	public void setData(K newAction, V newUtility)
-	{
-		this.action = newAction;
-		this.utility = newUtility;
 	}
 }
