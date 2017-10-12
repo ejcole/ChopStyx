@@ -6,53 +6,43 @@ import java.util.HashMap;
 import algorithms.MinimaxExploredVisitedAugmented;
 import algorithms.abstracts.Action;
 
-public class Main
+public class Main3h
 {
 	private static Action action;
 
 	public static void main(String[] args) throws FileNotFoundException
 	{
-		StickState2H.generateAllStates();
-		HashMap<StickState2H, StickState2H> stateMap = StickState2H.getStateMap();
-		HashMap<StickState2H, Action> stateToMoveMap = new HashMap<>();
+		StickState3H.generateAllStates();
+		HashMap<StickState3H, StickState3H> stateMap = StickState3H.getStateMap();
+		HashMap<StickState3H, Action> stateToMoveMap = new HashMap<>();
 
-		for (StickState2H state : stateMap.keySet())
+		for (StickState3H state : stateMap.keySet())
 		{
 			Action action = null;
 			if (!state.isTerminal())
 			{
 				if (state.move == StickState2H.MAX_TURN)
-				{
-					// action = MinimaxSetBased.minimaxDecisionMax(state); 
-					//action = MinimaxDFSSetAugmented.minimaxDecisionMax(state);
 					action = MinimaxExploredVisitedAugmented.minimaxDecisionMax(state);
-
-				}
 				else
-				{
-					// action = MinimaxSetBased.minimaxDecisionMin(state);
-					//action = MinimaxDFSSetAugmented.minimaxDecisionMin(state);
 					action = MinimaxExploredVisitedAugmented.minimaxDecisionMin(state);
-
-				}
 				stateToMoveMap.put(state, action);
 			}
 		}
 
-		for (StickState2H state : stateToMoveMap.keySet())
+		for (StickState3H state : stateToMoveMap.keySet())
 		{
 			action = stateToMoveMap.get(state);
 			System.out.println(state.toString() + (action != null ? action.toString() : "null"));
 		}
-		String fileName = "PathSetExploredSetMinimax.csv";
-		CSVMoveWriter.writeToCSV_2Hand(stateToMoveMap, fileName);
+		String fileName = "PathSetExploredSetMinimax_3h.csv";
+		CSVMoveWriter.writeToCSV_3Hand(stateToMoveMap, fileName);
 		//testReading2hFile(fileName);
 	}
 	
 	public static void testReading2hFile(String fileName) throws FileNotFoundException
 	{
-		HashMap<StickState2H, Action> loadedMap = CSVMoveWriter.convert2HandFileToMap(fileName);
-		for (StickState2H state : loadedMap.keySet())
+		HashMap<StickState3H, Action> loadedMap = CSVMoveWriter.convert3HandFileToMap(fileName);
+		for (StickState3H state : loadedMap.keySet())
 		{
 			action = loadedMap.get(state);
 			System.out.println(state.toString() + (action != null ? action.toString() : "null"));
