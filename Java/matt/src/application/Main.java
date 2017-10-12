@@ -2,7 +2,8 @@ package application;
 
 import java.util.HashMap;
 
-import algorithms.MinimaxSetBased;
+import algorithms.MinimaxDFSSetAugmented;
+import algorithms.MinimaxExploredVisitedAugmented;
 import algorithms.abstracts.Action;
 
 public class Main
@@ -22,13 +23,17 @@ public class Main
 			{
 				if (state.move == StickState2H.MAX_TURN)
 				{
-					action = MinimaxSetBased.minimaxDecisionMax(state);
-					// action = Minimax.minimaxDecisionMax(state);
+					// action = MinimaxSetBased.minimaxDecisionMax(state); 
+					//action = MinimaxDFSSetAugmented.minimaxDecisionMax(state);
+					action = MinimaxExploredVisitedAugmented.minimaxDecisionMax(state);
+
 				}
 				else
 				{
-					action = MinimaxSetBased.minimaxDecisionMin(state);
-					// action = Minimax.minimaxDecisionMin(state);
+					// action = MinimaxSetBased.minimaxDecisionMin(state);
+					//action = MinimaxDFSSetAugmented.minimaxDecisionMin(state);
+					action = MinimaxExploredVisitedAugmented.minimaxDecisionMin(state);
+
 				}
 				stateToMoveMap.put(state, action);
 			}

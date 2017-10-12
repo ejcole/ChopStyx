@@ -37,6 +37,7 @@ public class StickState2H extends State
 
 	/** Special Variables for loop detection */
 	protected boolean loopState = false;
+	protected boolean terminalStateOfLoop = false;
 	protected Integer encounteredDepth = null;
 
 	/**
@@ -124,8 +125,8 @@ public class StickState2H extends State
 	{
 		//@formatter:off
 		return (maxer[RIGHT] == HAND_OUT && maxer[LEFT] == HAND_OUT) 
-				|| (opponent[RIGHT] == HAND_OUT && opponent[LEFT] == HAND_OUT) 
-				|| loopState;
+				|| (opponent[RIGHT] == HAND_OUT && opponent[LEFT] == HAND_OUT); 
+				//|| loopState;
 		//@formatter:on
 
 	}
@@ -141,10 +142,10 @@ public class StickState2H extends State
 		{
 			return Math.pow(Math.E, depth);
 		}
-		else if(loopState)
+		else if (loopState)
 		{
-			//loop states are favor of neither, however we prefer them to infinite loops
-			//not sure what to do about ordering, 
+			// loop states are favor of neither, however we prefer them to infinite loops
+			// not sure what to do about ordering,
 			return 0;
 		}
 		else
@@ -246,9 +247,8 @@ public class StickState2H extends State
 
 	public String toString()
 	{
-		return String.format("%d %d | %d %d : %d loopstate:%b", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move, loopState);
-		// return String.format("%d %d | %d %d : %d\n", maxer[LEFT], maxer[RIGHT], opponent[LEFT],
-		// opponent[RIGHT], move);
+//		return String.format("%d %d | %d %d : %d loopstate:%b", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move, loopState);
+		 return String.format("%d %d | %d %d : %d", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move);
 
 	}
 
@@ -261,11 +261,39 @@ public class StickState2H extends State
 		allStates.put(startState, startState);
 		depthStateTest.put(startState, startState);
 
-		// depth first search
 		addChildStates(startState);
+		// depth first search
+		// addChildStatesDFS(startState);
+		// addChildStates_AdvLoopDetect(startState);
 	}
 
 	private static void addChildStates(StickState2H baseState)
+	{
+		// base case
+		if (baseState.isTerminal()) return;
+
+		Action[] actions = baseState.getActions();
+		for (Action actionRaw : actions)
+		{
+			ActionSticks2H action = (ActionSticks2H) actionRaw;
+			StickState2H child = (StickState2H) baseState.result((State) baseState, action);
+
+			if (allStates.get(child) == null)
+			{
+				depthStateTest.put(child, child);
+				allStates.put(child, child);
+
+				// recursively depth first find states, this will find loops for a given path
+				addChildStates(child);
+
+				// remove from depthFirst
+				depthStateTest.remove(child);
+			}
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private static void addChildStatesDFS(StickState2H baseState)
 	{
 		// base case
 		if (baseState.isTerminal()) return;
@@ -288,7 +316,7 @@ public class StickState2H extends State
 					allStates.put(child, child);
 
 					// recursively depth first find states, this will find loops for a given path
-					addChildStates(child);
+					addChildStatesDFS(child);
 
 					// remove from depthFirst
 					depthStateTest.remove(child);
@@ -306,6 +334,67 @@ public class StickState2H extends State
 		}
 	}
 
+	private static boolean addChildStates_AdvLoopDetect(StickState2H baseState)
+	{
+		// base case
+		if (baseState.isTerminal()) { return baseState.loopState; }
+
+		ArrayList<StickState2H> children = new ArrayList<>();
+
+		Action[] actions = baseState.getActions();
+		for (Action actionRaw : actions)
+		{
+			ActionSticks2H action = (ActionSticks2H) actionRaw;
+			StickState2H child = (StickState2H) baseState.result((State) baseState, action);
+			children.add(child);
+
+			// if we haven't encountered it in our depth first search
+			if (depthStateTest.get(child) == null)
+			{
+				// ensure that some other branch did not generate this state, because we will
+				// already have values for its children
+				if (allStates.get(child) == null)
+				{
+					// add to depth first set catch loops
+					depthStateTest.put(child, child);
+					allStates.put(child, child);
+
+					// recursively depth first find states, this will find loops for a given path
+					boolean wasLoopNode = addChildStates_AdvLoopDetect(child);
+
+					// overwrite state in allStates to include whether this was a loopstate
+					// we still need this to be in all states for the recursion to work (see the if
+					// statement two scopes up)
+					child.loopState = wasLoopNode;
+					allStates.put(child, child);
+
+					// remove from depthFirst
+					depthStateTest.remove(child);
+				}
+			}
+			else
+			{
+				// depth search has already found this state... mark the state as infinite loop.
+				// (note: if depth first found this, it should be in all states)
+				StickState2H previousEncounter = allStates.get(child);
+
+				// note that loopState should not factor into equality nor hash functions
+				previousEncounter.loopState = true;
+				previousEncounter.terminalStateOfLoop = true;
+			}
+		}
+
+		for (StickState2H child : children)
+		{
+			if (child.loopState)
+			{
+				baseState.loopState = true;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void main(String[] args)
 	{
 		StickState2H.generateAllStates();
@@ -315,19 +404,19 @@ public class StickState2H extends State
 
 		// HashSet<String> findDupliate = new HashSet<>();
 		// ArrayList<String> sortedList = new ArrayList<>();
-		 for(StickState2H state : stateMap.keySet())
-		 {
-		 state.printState();
-		// if(findDupliate.contains(state.toString()))
-		// {
-		// System.out.println("Found duplicate");
-		// }
-		// else
-		// {
-		// findDupliate.add(state.toString());
-		// sortedList.add(state.toString());
-		// }
-		 }
+		for (StickState2H state : stateMap.keySet())
+		{
+			state.printState();
+			// if(findDupliate.contains(state.toString()))
+			// {
+			// System.out.println("Found duplicate");
+			// }
+			// else
+			// {
+			// findDupliate.add(state.toString());
+			// sortedList.add(state.toString());
+			// }
+		}
 		// System.out.println(findDupliate.size());
 		// sortedList.sort(new Comparator<String>() {
 		// @Override

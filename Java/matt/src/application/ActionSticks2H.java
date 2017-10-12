@@ -13,7 +13,6 @@ public enum ActionSticks2H implements Action
 //	OPPONENT_RIGHT_ATK_RIGHT,   // 3 = player1_right 
 //	OPPONENT_RIGHT_ATK_LEFT   // 3 = player1_right
 	
-	
 	LEFT_ATK_RIGHT,
 	LEFT_ATK_LEFT, 
 	RIGHT_ATK_RIGHT,
