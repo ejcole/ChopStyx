@@ -1,10 +1,7 @@
 package application;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.DuplicateFormatFlagsException;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import algorithms.abstracts.Action;
 import algorithms.abstracts.State;
@@ -136,11 +133,11 @@ public class StickState2H extends State
 	{
 		if (maxer[RIGHT] == HAND_OUT && maxer[LEFT] == HAND_OUT)
 		{
-			return -Math.pow(Math.E, depth);
+			return -Math.pow(Math.E, -depth);
 		}
 		else if (opponent[RIGHT] == HAND_OUT && opponent[LEFT] == HAND_OUT)
 		{
-			return Math.pow(Math.E, depth);
+			return Math.pow(Math.E, -depth);
 		}
 		else if (loopState)
 		{
@@ -334,6 +331,7 @@ public class StickState2H extends State
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean addChildStates_AdvLoopDetect(StickState2H baseState)
 	{
 		// base case
@@ -427,6 +425,25 @@ public class StickState2H extends State
 		//
 		// for(String x : sortedList)
 		// System.out.print(x);
+	}
+
+	public String getFileString()
+	{
+		return "" + maxer[0] + " "+ maxer[1] + " " + opponent[0] + " " + opponent[1] + " " +  move;
+	}
+
+	public static StickState2H parseString(String string)
+	{
+		String[] stateStrElements = string.split(" ");
+		StickState2H state = new StickState2H();
+		
+		state.maxer[0] = Integer.parseInt(stateStrElements[0]);
+		state.maxer[1] = Integer.parseInt(stateStrElements[1]);
+		state.opponent[0] = Integer.parseInt(stateStrElements[2]);
+		state.opponent[1] = Integer.parseInt(stateStrElements[3]);
+		state.move = Integer.parseInt(stateStrElements[4]);
+		
+		return state;
 	}
 
 	// enum Player

@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import algorithms.abstracts.Action;
 import algorithms.abstracts.State;
-import application.Utils;
 
 public class MinimaxExploredVisitedAugmented
 {
@@ -71,7 +70,7 @@ public class MinimaxExploredVisitedAugmented
 		if (state.isTerminal())
 		{
 			//1 represents 1 node depth to terminal state
-			double utility = state.utility(depth) < 0 ? -depth : depth;
+			double utility = state.utility(depth);// < 0 ? -depth : depth;
 			if (utility == 0) return 0;
 			else if (utility > 0) return 1;
 			else return -1;
@@ -122,7 +121,7 @@ public class MinimaxExploredVisitedAugmented
 		if (state.isTerminal()) 
 		{ 
 			//1 represents 1 node depth to terminal state
-			double utility = state.utility(depth) < 0 ? -depth : depth;
+			double utility = state.utility(depth);// < 0 ? -depth : depth;
 			if(utility == 0) return 0;
 			else if (utility > 0) return 1;
 			else return -1;
@@ -172,11 +171,11 @@ public class MinimaxExploredVisitedAugmented
 		}
 		else if (previousDepth > 0)
 		{
-			return Math.pow(Math.E, curentDepth + previousDepth);
+			return Math.pow(Math.E, -(curentDepth + previousDepth));
 		}
 		else // previousDepth < 0
 		{
-			return -Math.pow(Math.E, curentDepth + -previousDepth);
+			return -Math.pow(Math.E, -(curentDepth + -previousDepth));
 		}
 	}
 

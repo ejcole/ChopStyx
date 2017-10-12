@@ -1,8 +1,8 @@
 package application;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
-import algorithms.MinimaxDFSSetAugmented;
 import algorithms.MinimaxExploredVisitedAugmented;
 import algorithms.abstracts.Action;
 
@@ -10,7 +10,7 @@ public class Main
 {
 	private static Action action;
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws FileNotFoundException
 	{
 		StickState2H.generateAllStates();
 		HashMap<StickState2H, StickState2H> stateMap = StickState2H.getStateMap();
@@ -42,6 +42,19 @@ public class Main
 		for (StickState2H state : stateToMoveMap.keySet())
 		{
 			action = stateToMoveMap.get(state);
+			System.out.println(state.toString() + (action != null ? action.toString() : "null"));
+		}
+		String fileName = "PathSetExploredSetMinimax.csv";
+		CSVMoveWriter.writeToCSV_2Hand(stateToMoveMap, fileName);
+		//testReading2hFile(fileName);
+	}
+	
+	public static void testReading2hFile(String fileName) throws FileNotFoundException
+	{
+		HashMap<StickState2H, Action> loadedMap = CSVMoveWriter.convert2HandFileToMap(fileName);
+		for (StickState2H state : loadedMap.keySet())
+		{
+			action = loadedMap.get(state);
 			System.out.println(state.toString() + (action != null ? action.toString() : "null"));
 		}
 	}
