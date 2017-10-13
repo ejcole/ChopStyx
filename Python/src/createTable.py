@@ -43,6 +43,12 @@ class State:
     def is_terminal(self):
         hands = list(self.hands)
         return sum(hands[0:self.hand_count]) == 0 or sum(hands[self.hand_count:2*self.hand_count]) == 0
+
+    def utility(self,depth):
+        if(self.turn == 0):
+            return -math.exp(depth)
+        else:
+            return math.exp(depth)
 # def generate_moves(state):
 #     p1 = [0, 1]
 #     p2 = [2, 3]
