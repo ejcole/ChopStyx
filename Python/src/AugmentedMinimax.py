@@ -9,8 +9,8 @@ class AugmentedMinimax(object):
         path_visited = set(start_state.key)
     
         #recycle previous discovered dictionaries because they will give us a speed up
-        self.max_explored = max_explored if max_explored != None else {}
-        self.min_explored = min_explored if min_explored != None else {}
+        self.max_explored = self.max_explored if self.max_explored != None else {}
+        self.min_explored = self.min_explored if self.min_explored != None else {}
         
         actions = start_state.get_actions()
         
@@ -19,7 +19,7 @@ class AugmentedMinimax(object):
         best_move_utilty = -math.inf
         
         for action in actions:
-            child_solution_depth = self.min_recurse(state.result(action), 1, path_visited)
+            child_solution_depth = self.min_recurse(start_state.result(action), 1, path_visited)
             child_utility = self.utility_from_depth(child_solution_depth, 0)
             if child_utility > best_move_utilty:
                 best_move = action
@@ -32,8 +32,8 @@ class AugmentedMinimax(object):
         path_visited = set(start_state.key)
     
         #recycle previous discovered dictionaries because they will give us a speed up
-        self.max_explored = max_explored if max_explored != None else {}
-        self.min_explored = min_explored if min_explored != None else {}
+        self.max_explored = self.max_explored if self.max_explored != None else {}
+        self.min_explored = self.min_explored if self.min_explored != None else {}
         
         actions = start_state.get_actions()
         
@@ -42,7 +42,7 @@ class AugmentedMinimax(object):
         best_move_utilty = math.inf
         
         for action in actions:
-            child_solution_depth = self.max_recurse(state.result(action), 1, path_visited)
+            child_solution_depth = self.max_recurse(start_state.result(action), 1, path_visited)
             child_utility = self.utility_from_depth(child_solution_depth, 0)
             if child_utility < best_move_utilty:
                 best_move = action
@@ -80,7 +80,7 @@ class AugmentedMinimax(object):
             #this node's best move achieves win/lose/loop in previous-best depth + 1
             self.min_explored[state.key] = self.adjust_depth(1, best_move_depth)
         else: #state has been explored
-            previous_depth = min_explored[state.key]
+            previous_depth = self.min_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
             if previous_depth == 0:
                 self.min_explored[state.key] = 0
@@ -122,7 +122,7 @@ class AugmentedMinimax(object):
             #this node's best move achieves win/lose/loop in previous-best depth + 1
             self.max_explored[state.key] = self.adjust_depth(1, best_move_depth)
         else: #state has been explored
-            previous_depth = max_explored[state.key]
+            previous_depth = self.max_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
             if previous_depth == 0:
                 self.max_explored[state.key] = 0

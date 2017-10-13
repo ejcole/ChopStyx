@@ -1,6 +1,7 @@
 __author__ = "group"
 import math
-import pandas as pd
+#import pandas as pd
+from AugmentedMinimax import *
 
 class State:
     def __init__(self, hand=(1, 1, 1, 1), turn=0, parent=None, loop=(), key=(1, 1, 1, 1, 0), childs=(),hand_count=2):
@@ -46,9 +47,9 @@ class State:
 
     def utility(self,depth):
         if(self.turn == 0):
-            return -math.exp(depth)
+            return -math.exp(-depth)
         else:
-            return math.exp(depth)
+            return math.exp(-depth)
 # def generate_moves(state):
 #     p1 = [0, 1]
 #     p2 = [2, 3]
@@ -71,7 +72,8 @@ def create_States_set(state, state_set):
         state_set.add(state)
         moves = generate_moves_v(state)
         for move in moves:
-            newState = tap(state, move)
+            #newState = tap(state, move) #think this was missed in the refactor?
+            newState = state.result(move)
             create_States_set(newState, state_set)
 
 
@@ -241,7 +243,7 @@ def main():
     # test = state_dict[((4,2,2,4,0))]
     # printHandAndAction(test, best_move_dict,state_dict)
     #
-    print(len(state_dict.keys()))
+    print("num reachable states", len(state_dict.keys()))
 
     #print(minimax(test_state))
     #play_game(initial_state,best_moves_dict=generate_best_moves(state_dict))
@@ -249,10 +251,19 @@ def main():
     # initial_state.turn=0
     # initial_state.hand_count =3
     # print(generate_moves_v(initial_state))
+    
+    minimaxer = AugmentedMinimax()
+     
+    for state_key, state in state_dict.items():
+        if state.turn == 0:
+            minimaxer.minimax_start_min_player(state)    
+        else:
+            minimaxer.minimax_start_max_player(state)    
 
 
 if __name__ == '__main__':
     main()
+
 
 
 
