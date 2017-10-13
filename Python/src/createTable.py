@@ -12,51 +12,52 @@ class State:
         self.childs = childs
         self.hand_count = hand_count
 
-def generate_moves_v(state):
-    p1 = list(range(state.hand_count))
-    p2 = list(range(state.hand_count,2*state.hand_count))
-    moves = []
-    if not state.turn:  # state[4] =0 for player 0 turn
-        for i in p1:
-            for j in p2:
-                if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i, j))
-    else:
-        for i in p2:
-            for j in p1:
-                if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i, j))
-    return moves
+    def get_actions(self):
+        p1 = list(range(self.hand_count))
+        p2 = list(range(self.hand_count,2*self.hand_count))
+        moves = []
+        if not self.turn:  # state[4] =0 for player 0 turn
+            for i in p1:
+                for j in p2:
+                    if self.hands[i] != 0 and self.hands[j] != 0:
+                        moves.append((i, j))
+        else:
+            for i in p2:
+                for j in p1:
+                    if self.hands[i] != 0 and self.hands[j] != 0:
+                        moves.append((i, j))
+        return moves
 
-def tap(state, action):
-    newHands = list(state.hands)
-    if newHands[action[1]] == 0 or newHands[action[0]] == 0:
-        print("Invalid Move")
-        return state
-    newHands[action[1]] += newHands[action[0]]
-    if newHands[action[1]] >= 5:
-        newHands[action[1]] = newHands[action[1]] % 5
-    newState = State(hand=tuple(newHands), turn=(state.turn + 1) % 2, parent=state)
-    newState.key = key_maker(newState)
+    def result(self, action):
+        newHands = list(self.hands)
+        if newHands[action[1]] == 0 or newHands[action[0]] == 0:
+            print("Invalid Move")
+            return self
+        newHands[action[1]] += newHands[action[0]]
+        if newHands[action[1]] >= 5:
+            newHands[action[1]] = newHands[action[1]] % 5
+        newState = State(hand=tuple(newHands), turn=(self.turn + 1) % 2, parent=self)
+        newState.key = key_maker(newState)
+        return newState
 
-    return newState
-
-
-def generate_moves(state):
-    p1 = [0, 1]
-    p2 = [2, 3]
-    moves = []
-    if not state.turn:  # state[4] =0 for player 0 turn
-        for i in p1:
-            for j in p2:
-                if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i, j))
-    else:
-        for i in p2:
-            for j in p1:
-                if state.hands[i] != 0 and state.hands[j] != 0:
-                    moves.append((i, j))
-    return moves
+    def is_terminal(self):
+        hands = list(self.hands)
+        return sum(hands[0:self.hand_count]) == 0 or sum(hands[self.hand_count:2*self.hand_count]) == 0
+# def generate_moves(state):
+#     p1 = [0, 1]
+#     p2 = [2, 3]
+#     moves = []
+#     if not state.turn:  # state[4] =0 for player 0 turn
+#         for i in p1:
+#             for j in p2:
+#                 if state.hands[i] != 0 and state.hands[j] != 0:
+#                     moves.append((i, j))
+#     else:
+#         for i in p2:
+#             for j in p1:
+#                 if state.hands[i] != 0 and state.hands[j] != 0:
+#                     moves.append((i, j))
+#     return moves
 
 
 def create_States_set(state, state_set):
@@ -71,9 +72,9 @@ def create_States_set(state, state_set):
 def createStates_dict(state, state_dict):
     #state_dict[key_maker(state)] = state
     if state.key not in state_dict:
-        moves = generate_moves_v(state)
+        moves = state.get_actions()
         for move in moves:
-            newState = tap(state, move)
+            newState = state.result(move)
             if newState in state_dict:
                 loo = list(state.loop)
                 state.loop = tuple(loo.append(newState))
@@ -91,22 +92,11 @@ def createStates_dict(state, state_dict):
             createStates_dict(newState, state_dict)
 
 
-# def createTables(initial_state):
-#     if goal_test(initial_state):
-#         return True
-#     moves = generate_moves(initial_state)
-
-
-def goal_test(state):
-    hands = list(state.hands)
-    return sum(hands[0:state.hand_count]) == 0 or sum(hands[state.hand_count:2*state.hand_count]) == 0
-
 
 def key_maker(state):
     x = list(state.hands)
     x.append(state.turn)
     return tuple(x)
-    # return tuple(list(state.hands).append(state.turn))
 
 
 def print_child(child):
@@ -142,7 +132,7 @@ def minimax(state):
 
 
 def minimax_max(state, depth):
-    if(goal_test(state)):
+    if(state.is_terminal()):
         return -math.exp(depth)
 
     v= -math.inf
@@ -156,7 +146,7 @@ def minimax_max(state, depth):
 
 
 def minimax_min(state, depth):
-    if(goal_test(state)):
+    if(state.is_terminal()):
         return math.exp(depth)
 
     v= math.inf
@@ -182,7 +172,7 @@ def printHandAndAction(state, best_move_dict,state_dict):
         if action == best_move_dict[state.key]:
             #print(action)
             #print(child_state.key)
-            if(goal_test(child_state)):
+            if(child_state.is_terminal()):
                 print(child_state.key)
                 if child_state.turn == 0:
                     print("Player 1 wins")
@@ -192,12 +182,14 @@ def printHandAndAction(state, best_move_dict,state_dict):
             child_state = state_dict[child_state.key]
             printHandAndAction(child_state, best_move_dict,state_dict)
 
+
 def generate_best_moves(state_dict):
     best_move_dict = {}
     for key in state_dict.keys():
         current_key = state_dict[key].key
         best_move_dict[current_key] = minimax(state_dict[current_key])
     return best_move_dict
+
 
 def write_csv(state_dict):
     best_move_dict = generate_best_moves(state_dict)
@@ -213,14 +205,14 @@ def write_csv(state_dict):
     f.close()
 
 def play_game(state,best_moves_dict):
-    while(not goal_test(state)):
+    while(not state.is_terminal()):
         move = best_moves_dict[state.key]
-        newstate = tap(state, move)
+        newstate = state.result(move)
         print(move)
         print(newstate.hands)
         tapper = int(input("Enter Tapper: "))
         tapee = int(input("Enter Tapee: "))
-        state = tap(newstate,(tapper,tapee))
+        state = (newstate.is_terminal((tapper,tapee)))
         print(state.hands)
 
 def main():
