@@ -6,7 +6,7 @@ import java.util.Random;
 
 import algorithms.abstracts.Action;
 
-public class GamePlayer2H
+public class GamePlayer3H
 {
 	public static void main(String[] args) throws FileNotFoundException
 	{
@@ -15,18 +15,20 @@ public class GamePlayer2H
 
 	public static void playAgainstRandomAi() throws FileNotFoundException
 	{
-		String fileName = "PathSetExploredSetMinimax_2h.csv";
-		HashMap<StickState2H, Action> loadedMap = CSVMoveWriter.convert2HandFileToMap(fileName);
+		String fileName = "PathSetExploredSetMinimax_3h.csv";
+		HashMap<StickState3H, Action> loadedMap = CSVMoveWriter.convert3HandFileToMap(fileName);
 
 		int winsAI = 0;
 		int winsRandom = 0;
 
 		boolean letRandomGoFirst = true;
 		boolean letBothAgentsGetFirstTurns = true;
+		// boolean letRandomGoFirst = false;
+		// boolean letBothAgentsGetFirstTurns = false;
 
 		int numRepeats = 50;
 
-		for (StickState2H state : loadedMap.keySet())
+		for (StickState3H state : loadedMap.keySet())
 		{
 			if (state.isTerminal())
 			{
@@ -76,15 +78,15 @@ public class GamePlayer2H
 		System.out.println("random wins: " + winsRandom);
 		System.out.println("AI wins: " + winsAI);
 
-		System.out.println("AI to Random Win Ratio" + winsAI / (double) winsRandom);
+		System.out.println("AI to Random Win Ratio " + winsAI / (double) winsRandom);
 
 	}
 
-	private static int playRandomAiGame(HashMap<StickState2H, Action> loadedMap, StickState2H state, boolean randomGoesFirst, int maxStateVisits)
+	private static int playRandomAiGame(HashMap<StickState3H, Action> loadedMap, StickState3H state, boolean randomGoesFirst, int maxStateVisits)
 	{
 		// avoid infinite loops by terminating the game when the same state has been reached a
 		// specific number of time
-		HashMap<StickState2H, Integer> statesVisited = new HashMap<>();
+		HashMap<StickState3H, Integer> statesVisited = new HashMap<>();
 
 		Random rng = new Random();
 		int randomMoveNumber = randomGoesFirst ? 0 : 1;
@@ -97,12 +99,12 @@ public class GamePlayer2H
 			{
 				Action[] actions = state.getActions();
 				int moveIndex = rng.nextInt(actions.length);
-				state = (StickState2H) state.result(state, actions[moveIndex]);
+				state = (StickState3H) state.result(state, actions[moveIndex]);
 			}
 			else
 			{
 				Action action = loadedMap.get(state);
-				state = (StickState2H) state.result(state, action);
+				state = (StickState3H) state.result(state, action);
 			}
 
 			// loop check
