@@ -67,7 +67,7 @@ class AugmentedMinimax(object):
                 return -1
             
         best_move_util = math.inf
-        best_move_depth = sys.maxsize #largest int
+        best_move_depth = math.inf #changing from maximum int to infinity sys.maxsize #largest int
         
         if state.key not in self.min_explored:
             for action in state.get_actions():
@@ -109,7 +109,7 @@ class AugmentedMinimax(object):
                 return -1
             
         best_move_util = -math.inf
-        best_move_depth = -sys.maxsize +1 #smallest int (twos complement to calculate)
+        best_move_depth = -math.inf #java code has smallest int, changing to inf #-sys.maxsize +1 #smallest int (twos complement to calculate)
         
         if state.key not in self.max_explored:
             for action in state.get_actions():
