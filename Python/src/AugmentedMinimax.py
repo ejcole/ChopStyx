@@ -1,4 +1,6 @@
 import math
+
+
 class AugmentedMinimax(object):
 
     max_explored = None
@@ -8,13 +10,13 @@ class AugmentedMinimax(object):
         """ Start the minimax algorithm as the max player """
         path_visited = set(start_state.key)
     
-        #recycle previous discovered dictionaries because they will give us a speed up
-        self.max_explored = self.max_explored if self.max_explored != None else {}
-        self.min_explored = self.min_explored if self.min_explored != None else {}
+        # recycle previous discovered dictionaries because they will give us a speed up
+        self.max_explored = self.max_explored if self.max_explored is not None else {}
+        self.min_explored = self.min_explored if self.min_explored is not None else {}
         
         actions = start_state.get_actions()
         
-        #start with a non-null move
+        # start with a non-null move
         best_move = actions[0]
         best_move_utilty = -math.inf
         
@@ -26,31 +28,30 @@ class AugmentedMinimax(object):
                 best_move_utilty = child_utility
                 
         return best_move
-            
+
     def minimax_start_min_player(self, start_state):
         """ start the minimax algorithm as the min player """
         path_visited = set(start_state.key)
     
-        #recycle previous discovered dictionaries because they will give us a speed up
-        self.max_explored = self.max_explored if self.max_explored != None else {}
-        self.min_explored = self.min_explored if self.min_explored != None else {}
+        # recycle previous discovered dictionaries because they will give us a speed up
+        self.max_explored = self.max_explored if self.max_explored is not None else {}
+        self.min_explored = self.min_explored if self.min_explored is not None else {}
         
         actions = start_state.get_actions()
         
-        #start with a non-null move
+        # start with a non-null move
         best_move = actions[0]
-        best_move_utilty = math.inf
+        best_move_utility = math.inf
         
         for action in actions:
             child_solution_depth = self.max_recurse(start_state.result(action), 1, path_visited)
             child_utility = self.utility_from_depth(child_solution_depth, 0)
-            if child_utility < best_move_utilty:
+            if child_utility < best_move_utility:
                 best_move = action
-                best_move_utilty = child_utility
+                best_move_utility = child_utility
                 
         return best_move
-    
-    
+
     def min_recurse(self, state, depth, path_visited):
         """ find the best move depth for the min player to take """
         if state.key in path_visited:
@@ -63,11 +64,11 @@ class AugmentedMinimax(object):
                 return 0
             elif utility > 0:
                 return 1
-            else: #utilty < 0
+            else:  # utility < 0
                 return -1
             
         best_move_util = math.inf
-        best_move_depth = math.inf #changing from maximum int to infinity sys.maxsize #largest int
+        best_move_depth = math.inf  # changing from maximum int to infinity sys.maxsize #largest int
         
         if state.key not in self.min_explored:
             for action in state.get_actions():
@@ -77,9 +78,9 @@ class AugmentedMinimax(object):
                     best_move_depth = child_depth
                     best_move_util = child_util
                     
-            #this node's best move achieves win/lose/loop in previous-best depth + 1
+            # this node's best move achieves win/lose/loop in previous-best depth + 1
             self.min_explored[state.key] = self.adjust_depth(1, best_move_depth)
-        else: #state has been explored
+        else:  # state has been explored
             previous_depth = self.min_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
             if previous_depth == 0:
@@ -105,11 +106,11 @@ class AugmentedMinimax(object):
                 return 0
             elif utility > 0:
                 return 1
-            else: #utilty < 0
+            else:  # utility < 0
                 return -1
             
         best_move_util = -math.inf
-        best_move_depth = -math.inf #java code has smallest int, changing to inf #-sys.maxsize +1 #smallest int (twos complement to calculate)
+        best_move_depth = -math.inf  # java code has smallest int, changing to inf #-sys.maxsize +1 #smallest int (twos complement to calculate)
         
         if state.key not in self.max_explored:
             for action in state.get_actions():
@@ -119,9 +120,9 @@ class AugmentedMinimax(object):
                     best_move_depth = child_depth
                     best_move_util = child_util
                     
-            #this node's best move achieves win/lose/loop in previous-best depth + 1
+            # this node's best move achieves win/lose/loop in previous-best depth + 1
             self.max_explored[state.key] = self.adjust_depth(1, best_move_depth)
-        else: #state has been explored
+        else:  # state has been explored
             previous_depth = self.max_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
             if previous_depth == 0:
@@ -148,18 +149,17 @@ class AugmentedMinimax(object):
         elif child_solution_depth > 0:
             return math.pow(math.e, -(current_depth + child_solution_depth))
         else:
-            #note: we're intentionally correcting child depth to be positive for calculation
+            # note: we're intentionally correcting child depth to be positive for calculation
             return -math.pow(math.e, -(current_depth + -child_solution_depth))
-        
-            
+
     def adjust_depth(self, current_depth, depth_to_terminal_state):
         """ Adjusts depth to be negative if terminal depth is negative, or positive if terminal depth is positive"""
         if depth_to_terminal_state == 0:
-            #depth leads to loop
-            return 0;
+            # depth leads to loop
+            return 0
         elif depth_to_terminal_state > 0:
-            #make the depth to terminal state a larger positive value
+            # make the depth to terminal state a larger positive value
             return current_depth + depth_to_terminal_state
         else:
-            #make the depth to terminal state a larger negative value
+            # make the depth to terminal state a larger negative value
             return depth_to_terminal_state - current_depth
