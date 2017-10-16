@@ -104,16 +104,7 @@ public class MinimaxExploredVisitedAugmented
 		{
 			// this state has already been explored, just look up previous value
 			int previousDepth = maxExplored.get(state);
-			// bestMove.utility = shortCutUtility(previousDepth, depth);
 			bestDepth = previousDepth;
-
-			// positive prevDepth = winMax, negative prevDepth = loseMax, zero prevDepth = loop
-			// if (previousDepth == 0)
-			// minExplored.put(state, 0);
-			// else if (previousDepth > 0)
-			// minExplored.put(state, previousDepth + 1);
-			// else // previousDepth < 0
-			// minExplored.put(state, previousDepth - 1);
 		}
 
 		pathVisited.remove(state);
@@ -163,16 +154,7 @@ public class MinimaxExploredVisitedAugmented
 		{
 			// this state has already been explored, just look up previous value
 			int previousDepth = minExplored.get(state);
-			// bestMove.utility = shortCutUtility(previousDepth, depth);
 			bestDepth = previousDepth;
-
-			// positive prevDepth = winMax, negative prevDepth = loseMax, zero prevDepth = loop
-			// if (previousDepth == 0)
-			// minExplored.put(state, 0);
-			// else if (previousDepth > 0)
-			// minExplored.put(state, previousDepth + 1);
-			// else // previousDepth < 0
-			// minExplored.put(state, previousDepth - 1);
 		}
 
 		pathVisited.remove(state);
