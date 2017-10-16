@@ -98,6 +98,7 @@ def write_csv(state_dict):
     df.to_csv("Best_Moves_wrong")
 
     f = open('bestmoves.csv', 'w')
+    f.write("state,action\n")
     for key in state_dict.keys():
         s = str(key)
         m = str(state_dict[key])
