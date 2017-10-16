@@ -60,6 +60,7 @@ public class CsvBattler2H
 			throw new RuntimeException("cmd arguments did not contain two values");
 		}
 		HashMap<StickState2H, Action> loadedMapFirst = CSVMoveWriter.convert2HandFileToMap(fileName1);
+		//HashMap<StickState2H, Action> loadedMapFirst = CSVMoveWriter.convert2HandFileToMap(fileName2); //make one csvs fight self other 
 		HashMap<StickState2H, Action> loadedMapSecond = CSVMoveWriter.convert2HandFileToMap(fileName2);
 
 		int winsAI = 0;
