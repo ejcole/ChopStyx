@@ -37,9 +37,9 @@ public enum ActionSticks2H implements Action
 		case LEFT_ATK_LEFT:
 			return move == StickState2H.MAX_TURN ? "0 2" : "2 0";
 		case LEFT_ATK_RIGHT:
-			return move == StickState2H.MAX_TURN ? "0 3" : "3 0";
+			return move == StickState2H.MAX_TURN ? "0 3" : "2 1";
 		case RIGHT_ATK_LEFT:
-			return move == StickState2H.MAX_TURN ? "1 2" : "2 1";
+			return move == StickState2H.MAX_TURN ? "1 2" : "3 0";
 		case RIGHT_ATK_RIGHT:
 			return move == StickState2H.MAX_TURN ? "1 3" : "3 1";
 		}
@@ -55,10 +55,10 @@ public enum ActionSticks2H implements Action
 		case "2 0":
 			return LEFT_ATK_LEFT;
 		case "0 3":
-		case "3 0":
+		case "2 1":
 			return LEFT_ATK_RIGHT;
 		case "1 2":
-		case "2 1":
+		case "3 0":
 			return RIGHT_ATK_LEFT;
 		case "1 3":
 		case "3 1":
