@@ -54,10 +54,6 @@ class AugmentedMinimax(object):
 
     def min_recurse(self, state, depth, path_visited):
         """ find the best move depth for the min player to take """
-        if state.key in path_visited:
-            return 0
-        path_visited.add(state.key)
-        
         if state.is_terminal():
             utility = state.utility(depth)
             if utility == 0:
@@ -66,6 +62,10 @@ class AugmentedMinimax(object):
                 return 1
             else:  # utility < 0
                 return -1
+        
+        if state.key in path_visited:
+            return 0
+        path_visited.add(state.key)
             
         best_move_util = math.inf
         best_move_depth = math.inf  # changing from maximum int to infinity sys.maxsize #largest int
@@ -83,23 +83,14 @@ class AugmentedMinimax(object):
         else:  # state has been explored
             previous_depth = self.min_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
-            if previous_depth == 0:
-                self.min_explored[state.key] = 0
-            elif previous_depth > 0:
-                self.min_explored[state.key] = previous_depth + 1
-            else:
-                self.min_explored[state.key] = previous_depth - 1
+            best_move_depth = previous_depth
                 
         path_visited.remove(state.key)
         
-        return self.utility_from_depth(1, best_move_depth) 
+        return self.adjust_depth(1, best_move_depth) 
     
     def max_recurse(self, state, depth, path_visited):
         """ find the best move depth for the max player to take """
-        if state.key in path_visited:
-            return 0
-        path_visited.add(state.key)
-        
         if state.is_terminal():
             utility = state.utility(depth)
             if utility == 0:
@@ -109,6 +100,10 @@ class AugmentedMinimax(object):
             else:  # utility < 0
                 return -1
             
+        if state.key in path_visited:
+            return 0
+        path_visited.add(state.key)
+        
         best_move_util = -math.inf
         best_move_depth = -math.inf  # java code has smallest int, changing to inf #-sys.maxsize +1 #smallest int (twos complement to calculate)
         
@@ -125,16 +120,11 @@ class AugmentedMinimax(object):
         else:  # state has been explored
             previous_depth = self.max_explored[state.key]
             best_move_util = self.utility_from_depth(previous_depth, depth)
-            if previous_depth == 0:
-                self.max_explored[state.key] = 0
-            elif previous_depth > 0:
-                self.max_explored[state.key] = previous_depth + 1
-            else:
-                self.max_explored[state.key] = previous_depth - 1
+            best_move_depth = previous_depth
                 
         path_visited.remove(state.key)
         
-        return self.utility_from_depth(1, best_move_depth) 
+        return self.adjust_depth(1, best_move_depth) 
     
     def utility_from_depth(self, child_solution_depth, current_depth):
         """
