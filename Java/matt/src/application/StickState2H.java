@@ -50,6 +50,16 @@ public class StickState2H extends State
 		move = MAX_TURN;
 	}
 
+	public StickState2H(int xleft, int xright, int nleft, int nright, int move)
+	{
+		this();
+		maxer[LEFT] = xleft;
+		maxer[RIGHT] = xright;
+		opponent[LEFT] = nleft;
+		opponent[RIGHT] = nright;
+		this.move = move == MAX_TURN ? MAX_TURN : MAX_TURN;
+	}
+
 	public StickState2H(StickState2H toCopy)
 	{
 		this.maxer = toCopy.maxer.clone();
@@ -244,8 +254,9 @@ public class StickState2H extends State
 
 	public String toString()
 	{
-//		return String.format("%d %d | %d %d : %d loopstate:%b", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move, loopState);
-		 return String.format("%d %d | %d %d : %d", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move);
+		// return String.format("%d %d | %d %d : %d loopstate:%b", maxer[LEFT], maxer[RIGHT],
+		// opponent[LEFT], opponent[RIGHT], move, loopState);
+		return String.format("%d %d | %d %d : %d", maxer[LEFT], maxer[RIGHT], opponent[LEFT], opponent[RIGHT], move);
 
 	}
 
@@ -429,20 +440,20 @@ public class StickState2H extends State
 
 	public String getFileString()
 	{
-		return "" + maxer[LEFT] + " "+ maxer[RIGHT] + " " + opponent[LEFT] + " " + opponent[RIGHT] + " " +  move;
+		return "" + maxer[LEFT] + " " + maxer[RIGHT] + " " + opponent[LEFT] + " " + opponent[RIGHT] + " " + move;
 	}
 
 	public static StickState2H parseString(String string)
 	{
 		String[] stateStrElements = string.split(" ");
 		StickState2H state = new StickState2H();
-		
+
 		state.maxer[LEFT] = Integer.parseInt(stateStrElements[0]);
 		state.maxer[RIGHT] = Integer.parseInt(stateStrElements[1]);
 		state.opponent[LEFT] = Integer.parseInt(stateStrElements[2]);
 		state.opponent[RIGHT] = Integer.parseInt(stateStrElements[3]);
 		state.move = Integer.parseInt(stateStrElements[4]);
-		
+
 		return state;
 	}
 

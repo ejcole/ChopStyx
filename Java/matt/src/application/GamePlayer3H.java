@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Random;
@@ -136,5 +137,28 @@ public class GamePlayer3H
 				}
 			}
 		}
+	}
+	
+	public static void humanVsAi(String[] args)
+	{
+		String fileName = "PathSetExploredSetMinimax_3h.csv";
+		
+		//check if different CSV cmd argument was provided
+		if(args.length > 0)
+		{
+			File file = new File(args[0]);
+			if(file.exists())
+			{
+				String[] components = args[0].split(".");
+				if(components[components.length-1] == ".csv")
+				{
+					fileName = args[0];
+				}
+			}
+		}
+		
+		
+		
+		
 	}
 }
