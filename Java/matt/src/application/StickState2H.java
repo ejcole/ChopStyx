@@ -243,6 +243,8 @@ public class StickState2H extends State
 
 	private int updateHand(int attackerHand, int recipientHand)
 	{
+		if(recipientHand == 0) throw new RuntimeException("recipient hand has a value of 0 and is being attacked");
+		if(attackerHand == 0) throw new RuntimeException("attacker hand has a value of 0");
 		return (recipientHand + attackerHand) % 5;
 	}
 

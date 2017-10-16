@@ -13,8 +13,8 @@ public class GamePlayer2H
 {
 	public static void main(String[] args) throws FileNotFoundException
 	{
-		// playAgainstRandomAi();
-		humanVsAi(args);
+		 playAgainstRandomAi();
+//		humanVsAi(args);
 	}
 
 	public static void playAgainstRandomAi() throws FileNotFoundException
